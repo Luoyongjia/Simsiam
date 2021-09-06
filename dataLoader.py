@@ -41,7 +41,7 @@ class GaussianBlur(object):
         return x
 
 
-class transform_single():
+class transform_single:
     def __init__(self, image_size, train, normalize=CIFAR10NORM):
         if train is True:
             self.transform = transforms.Compose([
@@ -62,8 +62,8 @@ class transform_single():
         return self.transform(x)
 
 
-class transform_simsiam():
-    def __init__(self, image_size, normalize = CIFAR10NORM):
+class transform_simsiam:
+    def __init__(self, image_size, normalize=CIFAR10NORM):
         image_size = 224 if image_size is None else image_size
         p_blur = 0.5 if image_size > 32 else 0
         self.transform = transforms.Compose([

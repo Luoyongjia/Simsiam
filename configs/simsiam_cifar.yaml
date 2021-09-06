@@ -4,8 +4,7 @@ dataset:
   image_size: 32
   num_workers: 4
 
-model: 
-  name: simsiam
+model:
   backbone: resnet18_cifar_variant1
   proj_layers: 2
 
