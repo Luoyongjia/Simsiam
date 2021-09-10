@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from ResNets import resnet18, resnet50
+from models.ResNets import resnet18, resnet50
 
 
 def get_backbone(backbone, castrate=True):
@@ -100,4 +100,4 @@ class Simsiam(nn.Module):
 
         L = D(p1, z2) / 2 + D(p2, z1) / 2
 
-        return L
+        return {'loss': L}
