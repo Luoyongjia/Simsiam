@@ -6,6 +6,7 @@ from tqdm import tqdm
 from Utils import *
 from dataLoader import load_data
 from models import Simsiam
+from linear_eval import linear_eval
 
 
 def save_checkpoint(model, optimizer, args, epoch):
@@ -71,11 +72,26 @@ def train(train_loader, memo_loader, test_loader, model, optimizer, scheduler, a
 
 if __name__ == "__main__":
     args = get_args()
+    # args.debug = True
     train_loader, memo_loader, test_loader = load_data(args)
     model = Simsiam(args)
     optimizer = torch.optim.SGD(model.parameters(),
                                 lr=args.train.base_lr*args.train.batch_size/256,
                                 momentum=args.train.optimizer.momentum,
                                 weight_decay=args.train.optimizer.weight_decay)
+    scheduler = LR_Scheduler(optimizer,
+                             args.train.warmup_epochs, args.train.warmup_lr*args.train.batch_size/256,
+                             args.train.num_epochs, args.train.base_lr*args.train.batch_size/256, args.train.final_lr*args.train.batch_size/256,
+                             len(train_loader),
+                             constant_predictor_lr=True)
     train(train_loader, memo_loader, test_loader, model, optimizer, scheduler, args)
 
+    if args.eval is not False:
+        args.checkpoint_dir = f'./res/{args.exp_numo}/checkpoint-latest.pth.tar'
+        checkpoint = torch.load(args.checkpoint_dir)
+        linear_eval(train_loader, test_loader, checkpoint, args)
+
+    completed_log_dir = args.log_dir.replace('in-progress', 'debug' if args.debug else 'completed')
+
+    os.rename(args.log_dir, completed_log_dir)
+    print(f'Log file has been saved to {completed_log_dir}')

@@ -11,7 +11,7 @@ class LR_Scheduler(object):
         decay_iter = iter_per_epoch * (num_epoch - warmup_epochs)
         cosine_lr_schedule = final_lr + 0.5 * (base_lr - final_lr) * (1 + np.cos(np.pi * np.arange(decay_iter) / decay_iter))
 
-        self.lr_schedule = np.concatenate(warmup_lr_schedule, cosine_lr_schedule)
+        self.lr_schedule = np.concatenate((warmup_lr_schedule, cosine_lr_schedule))
         self.optimizer = optimizer
         self.iter = 0
         self.current_lr = 0

@@ -115,7 +115,8 @@ class ResNet(nn.Module):
         # normal: kernel_size=7, stride=2, padding=3
         # CIFAR10: kernel_size=3, stride=1, padding=1
         self.conv1 = nn.Conv2d(3, self.in_planes, kernel_size=3, stride=1, padding=1, bias=False)
-        self.bn1 = nn.ReLU(inplace=True)
+        self.bn1 = norm_layer(self.in_planes)
+        self.relu = nn.ReLU(inplace=True)
         self.layer1 = self.make_layer(block, 64, layers[0])
         self.layer2 = self.make_layer(block, 128, layers[1], stride=2,
                                       dilate=replace_stride_with_dilation[0])
@@ -131,7 +132,7 @@ class ResNet(nn.Module):
                 nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
             elif isinstance(m, (nn.BatchNorm2d, nn.GroupNorm)):
                 nn.init.constant_(m.weight, 1)
-                nn.init.constant_(m.biase, 0)
+                nn.init.constant_(m.bias, 0)
 
         # Zero-initialize the last BN in each residual branch
         if zero_init_residual:

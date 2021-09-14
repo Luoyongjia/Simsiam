@@ -51,7 +51,6 @@ def get_args():
     parser.add_argument('--log_dir', type=str, default="/Users/luoyongjia/Program/py/SimSiam/res/logs")
     parser.add_argument('--checkpoint_dir', type=str, default="/Users/luoyongjia/Program/py/SimSiam/res/checkpoints")
     parser.add_argument('--device', type=str, default='cuda' if torch.cuda.is_available() else 'cpu')
-    parser.add_argument('--eval_from', type=str, default=None)
 
     args = parser.parse_args()
 

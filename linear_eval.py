@@ -26,6 +26,49 @@ def linear_eval(train_loader, test_loader, checkpoint, args):
                                 momentum=args.eval.optimizer.momentum,
                                 weight_decay=args.eval.optimizer.weight_decay)
 
+    lr_scheduler = LR_Scheduler(
+        optimizer,
+        args.eval.warmup_epochs, args.eval.warmup_lr*args.eval.batch_size/256,
+        args.eval.num_epochs, args.eval.base_lr*args.eval.batch_size/256, args.eval.final_lr*args.eval.batch_size/256,
+        len(train_loader),
+    )
+
+    loss_meter = Average_meter(name='Loss')
+    acc_meter = Average_meter(name='Accuracy')
+
+    # training
+    global_progress = tqdm(range(0, args.eval.num_epochs), desc='Evaluating')
+    for epoch in global_progress:
+        loss_meter.reset()
+        model.eval()
+        classifier.train()
+        local_progress = tqdm(train_loader, desc=f'Epoch {epoch}/{args.eval.num_epochs}', disable=True)
+
+        for idx, (image, labels) in enumerate(local_progress):
+            classifier.zero_grad()
+            with torch.no_grad():
+                feature = model(image.to(args.device))
+
+            preds = classifier(feature)
+
+            loss = F.cross_entropy(preds, labels.to(args.device))
+
+            loss.backward()
+            optimizer.step()
+            loss_meter.update(loss.item())
+            lr = lr_scheduler.step()
+            local_progress.set_postfix({'lr': lr, 'loss': loss_meter.val, 'loss_avg': loss_meter.avg})
+
+    classifier.eval()
+    correct, total = 0, 0
+    acc_meter.reset()
+    for idx,  (image, labels) in enumerate(test_loader):
+        with torch.no_grad():
+            feature = model(image.to(args.model))
+            preds = classifier(feature).argmax(dim=1)
+            correct = (preds == labels.to(args.device)).sum().item()
+            acc_meter.update(correct/preds.shape[0])
+    print(f'Accuracy = {acc_meter.avg * 100: .2f}')
 
 
 if __name__ == "__main__":
