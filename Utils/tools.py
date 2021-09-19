@@ -1,33 +1,54 @@
-from tensorboardX import SummaryWriter
+# from tensorboardX import SummaryWriter
+import logging
+import os
+import time
 
 from torch import Tensor
 from collections import OrderedDict
-import os
 
 
-def Logger(version, exp_num):
-    def __init__(self, log_dir, tensorboard=True, matplotlib=True):
+# class Logger(object):
+#     def __init__(self, log_dir, tensorboard=True, matplotlib=True):
+#
+#         self.reset(log_dir, tensorboard, matplotlib)
+#
+#     def reset(self, log_dir=None, tensorboard=True, matplotlib=True):
+#
+#         if log_dir is not None: self.log_dir = log_dir
+#         self.writer = SummaryWriter(log_dir=self.log_dir) if tensorboard else None
+#         self.counter = OrderedDict()
+#
+#     def update_scalers(self, ordered_dict):
+#
+#         for key, value in ordered_dict.items():
+#             if isinstance(value, Tensor):
+#                 ordered_dict[key] = value.item()
+#             if self.counter.get(key) is None:
+#                 self.counter[key] = 1
+#             else:
+#                 self.counter[key] += 1
+#
+#             if self.writer:
+#                 self.writer.add_scalar(key, value, self.counter[key])
 
-        self.reset(log_dir, tensorboard, matplotlib)
 
-    def reset(self, log_dir=None, tensorboard=True, matplotlib=True):
+def Logger(exp_num):
+    logger = logging.getLogger()
+    logger.setLevel(logging.INFO)
+    rq = time.strftime('%Y%m%d%H%M', time.localtime(time.time()))[:-4]
 
-        if log_dir is not None: self.log_dir = log_dir
-        self.writer = SummaryWriter(log_dir=self.log_dir) if tensorboard else None
-        self.counter = OrderedDict()
+    if not os.path.exists(f'./res/logs/{exp_num}'):
+        os.mkdir(f'./res/logs/{exp_num}')
+    logPath = f'./res/logs/{exp_num}/'
+    logName = logPath + rq + '.log'
+    fh = logging.FileHandler(logName, mode='a')
+    fh.setLevel(logging.DEBUG)
 
-    def update_scalers(self, ordered_dict):
+    formatter = logging.Formatter("%(asctime)s - %(filename)s[line:%(lineno)d] - %(levelname)s: %(message)s")
+    fh.setFormatter(formatter)
 
-        for key, value in ordered_dict.items():
-            if isinstance(value, Tensor):
-                ordered_dict[key] = value.item()
-            if self.counter.get(key) is None:
-                self.counter[key] = 1
-            else:
-                self.counter[key] += 1
-
-            if self.writer:
-                self.writer.add_scalar(key, value, self.counter[key])
+    logger.addHandler(fh)
+    return logger
 
 
 class Average_meter:
