@@ -43,39 +43,26 @@ def set_deterministic(seed):
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-c', '--config-file', type=str, default="/Users/luoyongjia/Program/py/SimSiam/configs/simsiam_cifar.yaml", help="xxx.yaml")
-    parser.add_argument('--debug', action='store_true', default=False)
-    parser.add_argument('--debug_subset_size', type=int, default=8)
+    parser.add_argument('-c', '--config-file', type=str, default="./configs/simsiam_cifar.yaml", help="xxx.yaml")
     parser.add_argument('--download', action='store_true', help="if cannot fine dataset, download from web")
-    parser.add_argument('--data_dir', type=str, default="/Users/luoyongjia/Research/Data/cifar10")
-    parser.add_argument('--log_dir', type=str, default="/Users/luoyongjia/Program/py/SimSiam/res/logs")
-    parser.add_argument('--checkpoint_dir', type=str, default="/Users/luoyongjia/Program/py/SimSiam/res/checkpoints")
+    parser.add_argument('--data_dir', type=str, default="/root/data/lyj/data/cifar10")
+    parser.add_argument('--log_dir', type=str, default="./res/logs")
+    parser.add_argument('--checkpoint_dir', type=str)
     parser.add_argument('--device', type=str, default='cuda' if torch.cuda.is_available() else 'cpu')
+    parser.add_argument('--hide_progress', action='store_true')
+    parser.add_argument('--eval_from', type=str, default=None)
 
     args = parser.parse_args()
 
     with open(args.config_file, 'r') as f:
         for key, value in Namespace(yaml.load(f, Loader=yaml.FullLoader)).__dict__.items():
             vars(args)[key] = value
-
-    if args.debug:
-        if args.train:
-            args.train.batch_size = 2
-            args.train.num_epochs = 1
-            args.train.stop_at_epoch = 1
-        if args.eval:
-            args.eval.batch_size = 2
-            args.eval.num_epochs = 1
-        args.dataset.num_workers = 0
+    args.log_dir = f'./res/{args.exp_num}/logs'
 
     assert not None in [args.log_dir, args.data_dir, args.name]
 
-    args.log_dir = os.path.join(args.log_dir, 'progress_' + datetime.now().strftime('%m%d%H%M%S_')+args.name)
-    os.makedirs(args.log_dir, exist_ok=False)
     print(f'Creating file {args.log_dir}')
-    os.makedirs(args.checkpoint_dir, exist_ok=True)
 
-    shutil.copy2(args.config_file, args.log_dir)
     set_deterministic(args.seed)
 
     vars(args)['aug_kwargs'] = {
@@ -92,6 +79,7 @@ def get_args():
         'pin_memory': True,
         'num_workers': args.dataset.num_workers,
     }
+
 
     return args
 

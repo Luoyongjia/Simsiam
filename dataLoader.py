@@ -7,7 +7,7 @@ from PIL import Image, ImageFilter
 
 from Utils.parser import get_args
 
-IMAGENETNORM = [[0.485, 0.456, 0.406],[0.229, 0.224, 0.225]]
+IMAGENETNORM = [[0.485, 0.456, 0.406], [0.229, 0.224, 0.225]]
 CIFAR10NORM = [[0.4914, 0.4822, 0.4465], [0.2023, 0.1994, 0.2010]]
 
 
@@ -102,6 +102,9 @@ def load_data(args):
     memo_dataset = get_dataset(transform=get_transform(train=False, train_classifier=False, **args.aug_kwargs),
                                train=True,
                                **args.dataset_kwargs)
+    linear_train_dataset = get_dataset(transform=get_transform(train=False, train_classifier=True, **args.aug_kwargs),
+                                       train=True,
+                                       **args.dataset_kwargs)
     test_dataset = get_dataset(transform=get_transform(train=False, train_classifier=False, **args.aug_kwargs),
                                train=False,
                                **args.dataset_kwargs)
@@ -109,11 +112,13 @@ def load_data(args):
     train_loader = torch.utils.data.DataLoader(train_dataset, shuffle=True, batch_size=args.train.batch_size,
                                                **args.dataloader_kwargs)
     memo_loader = torch.utils.data.DataLoader(memo_dataset, shuffle=False, batch_size=args.train.batch_size,
-                                             **args.dataloader_kwargs)
+                                              **args.dataloader_kwargs)
+    linear_train_loader = torch.utils.data.DataLoader(memo_dataset, shuffle=True, batch_size=args.train.batch_size,
+                                              **args.dataloader_kwargs)
     test_loader = torch.utils.data.DataLoader(test_dataset, shuffle=False, batch_size=256,
                                               **args.dataloader_kwargs)
 
-    return train_loader, memo_loader, test_loader
+    return train_loader, memo_loader, linear_train_loader, test_loader
 
 
 if __name__ == "__main__":

@@ -11,9 +11,9 @@ def linear_eval(train_loader, test_loader, checkpoint, args):
     model = get_backbone(args.model.backbone)
     classifier = nn.Linear(in_features=model.output_dim, out_features=10, bias=True).to(args.device)
 
-    assert args.eval_from is not None
+    # assert args.eval_from is not None
     save_dict = checkpoint['state_dict']
-    msg = model.load_state_dict({k[9:]: v for k, v in save_dict['state_dict'].items() if k.startswith('backbone.')},
+    msg = model.load_state_dict({k[9:]: v for k, v in save_dict.items() if k.startswith('backbone.')},
                                 strict=True)
     model = model.to(args.device)
     model = nn.DataParallel(model)
@@ -64,7 +64,7 @@ def linear_eval(train_loader, test_loader, checkpoint, args):
     acc_meter.reset()
     for idx,  (image, labels) in enumerate(test_loader):
         with torch.no_grad():
-            feature = model(image.to(args.model))
+            feature = model(image.to(args.device))
             preds = classifier(feature).argmax(dim=1)
             correct = (preds == labels.to(args.device)).sum().item()
             acc_meter.update(correct/preds.shape[0])

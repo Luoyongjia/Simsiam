@@ -1,5 +1,5 @@
 name: simsiam-cifar10-experiment-resnet18_cifar_variant1
-device: cpu
+device: cuda
 exp_num: 0
 save_frequency: 2
 dataset: 
