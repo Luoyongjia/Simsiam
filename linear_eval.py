@@ -28,8 +28,8 @@ def linear_eval(train_loader, test_loader, checkpoint, args):
 
     lr_scheduler = LR_Scheduler(
         optimizer,
-        args.eval.warmup_epochs, args.eval.warmup_lr*args.eval.batch_size/256,
-        args.eval.num_epochs, args.eval.base_lr*args.eval.batch_size/256, args.eval.final_lr*args.eval.batch_size/256,
+        args.eval.warmup_epochs, args.eval.warmup_lr,
+        args.eval.num_epochs, args.eval.base_lr, args.eval.final_lr,
         len(train_loader),
     )
 

@@ -14,11 +14,11 @@ def get_backbone(backbone, castrate=True):
     return backbone
 
 
-def D(p, z, version='simplified'):
+def D(p, z, version='original'):
     if version == 'original':
         z = z.detach()
-        p = F.normalize(p, dim=1)
-        z = F.normalize(z, dim=1)
+        p = F.normalize(p, p=2, dim=1)
+        z = F.normalize(z, p=2, dim=1)
         return -(p * z).sum(dim=1).mean()
     
     elif version == 'simplified':
@@ -85,6 +85,7 @@ class Simsiam(nn.Module):
         super(Simsiam, self).__init__()
         self.backbone = get_backbone(args.model.backbone)
         self.projector = projection_head(self.backbone.output_dim)
+        self.projector.set_layersNum(args.model.proj_layers)
 
         self.encoder = nn.Sequential(
             self.backbone,

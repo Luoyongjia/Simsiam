@@ -71,7 +71,7 @@ class transform_simsiam:
             transforms.RandomHorizontalFlip(),
             transforms.RandomApply([transforms.ColorJitter(0.4, 0.4, 0.4, 0.1)], p=0.8),
             transforms.RandomGrayscale(p=0.2),
-            transforms.RandomApply([GaussianBlur([.1, 2.])], p=0.5),
+            transforms.RandomApply([GaussianBlur([.1, 2.])], p=p_blur),
             transforms.ToTensor(),
             transforms.Normalize(*normalize)
         ])
@@ -88,7 +88,7 @@ def get_transform(image_size=224, train=True, train_classifier=None):
     elif train is False:
         if train_classifier is None:
             raise Exception
-        augmentation = transform_single(image_size, train = train_classifier)
+        augmentation = transform_single(image_size, train=train_classifier)
     else:
         raise NotImplementedError
 
@@ -113,8 +113,8 @@ def load_data(args):
                                                **args.dataloader_kwargs)
     memo_loader = torch.utils.data.DataLoader(memo_dataset, shuffle=False, batch_size=args.train.batch_size,
                                               **args.dataloader_kwargs)
-    linear_train_loader = torch.utils.data.DataLoader(memo_dataset, shuffle=True, batch_size=args.train.batch_size,
-                                              **args.dataloader_kwargs)
+    linear_train_loader = torch.utils.data.DataLoader(linear_train_dataset, shuffle=True, batch_size=args.train.batch_size,
+                                                      **args.dataloader_kwargs)
     test_loader = torch.utils.data.DataLoader(test_dataset, shuffle=False, batch_size=256,
                                               **args.dataloader_kwargs)
 
@@ -123,4 +123,5 @@ def load_data(args):
 
 if __name__ == "__main__":
     args = get_args()
-    train_loader, _, _ = load_data(args)
+    train_loader, _, _, _ = load_data(args)
+    print(train_loader)

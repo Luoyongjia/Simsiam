@@ -1,4 +1,5 @@
 import torch
+import math
 import numpy as np
 
 
@@ -13,19 +14,34 @@ class LR_Scheduler(object):
 
         self.lr_schedule = np.concatenate((warmup_lr_schedule, cosine_lr_schedule))
         self.optimizer = optimizer
+        self.init_lr = base_lr
+        self.num_epoch = num_epoch
         self.iter = 0
         self.current_lr = 0
 
-    def step(self):
+    # def step(self):
+    #     for param_group in self.optimizer.param_groups:
+    #         if self.constant_predictor_lr and param_group['name'] == 'predictor':
+    #             param_group['lr'] = self.base_lr
+    #         else:
+    #             lr = param_group['lr'] = self.lr_schedule[self.iter]
+    #
+    #     self.iter += 1
+    #     self.current_lr = lr
+    #     return lr
+    def step(self, epoch):
+        """Decay the learning rate based on schedule"""
+        cur_lr = self.init_lr * 0.5 * (1. + math.cos(math.pi * epoch / self.num_epoch))
         for param_group in self.optimizer.param_groups:
-            if self.constant_predictor_lr and param_group['name'] == 'predictor':
-                param_group['lr'] = self.base_lr
+            if 'fix_lr' in param_group and param_group['fix_lr']:
+                param_group['lr'] = self.init_lr
             else:
-                lr = param_group['lr'] = self.lr_schedule[self.iter]
+                param_group['lr'] = cur_lr
 
-        self.iter += 1
-        self.current_lr = lr
-        return lr
+        self.current_lr = cur_lr
+        return cur_lr
 
     def get_lr(self):
         return self.current_lr
+
+

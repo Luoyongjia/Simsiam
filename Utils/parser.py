@@ -43,9 +43,9 @@ def set_deterministic(seed):
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-c', '--config-file', type=str, default="./configs/simsiam_cifar.yaml", help="xxx.yaml")
+    parser.add_argument('-c', '--config-file', type=str, default="./configs/simsiam_cifar_debug.yaml", help="xxx.yaml")
     parser.add_argument('--download', action='store_true', help="if cannot fine dataset, download from web")
-    parser.add_argument('--data_dir', type=str, default="/root/data/lyj/data/cifar10")
+    parser.add_argument('--data_dir', type=str, default="/Users/luoyongjia/Research/Data/cifar10")
     parser.add_argument('--log_dir', type=str, default="./res/logs")
     parser.add_argument('--checkpoint_dir', type=str)
     parser.add_argument('--device', type=str, default='cuda' if torch.cuda.is_available() else 'cpu')
@@ -72,7 +72,6 @@ def get_args():
         'dataset': args.dataset.name,
         'data_dir': args.data_dir,
         'download': args.download,
-        'debug_subset_size': args.debug_subset_size if args.debug else None,
     }
     vars(args)['dataloader_kwargs'] = {
         'drop_last': True,
