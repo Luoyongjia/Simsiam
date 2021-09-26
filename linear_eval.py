@@ -56,7 +56,7 @@ def linear_eval(train_loader, test_loader, checkpoint, args):
             loss.backward()
             optimizer.step()
             loss_meter.update(loss.item())
-            lr = lr_scheduler.step()
+            lr = lr_scheduler.step(epoch)
             local_progress.set_postfix({'lr': lr, 'loss': loss_meter.val, 'loss_avg': loss_meter.avg})
 
     classifier.eval()
