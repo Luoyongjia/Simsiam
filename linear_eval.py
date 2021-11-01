@@ -7,7 +7,7 @@ from Utils import *
 from models import *
 
 
-def linear_eval(train_loader, test_loader, checkpoint, args):
+def linear_eval(train_loader, test_loader, checkpoint, logger, args):
     model = get_backbone(args.model.backbone)
     classifier = nn.Linear(in_features=model.output_dim, out_features=10, bias=True).to(args.device)
 
@@ -68,7 +68,7 @@ def linear_eval(train_loader, test_loader, checkpoint, args):
             preds = classifier(feature).argmax(dim=1)
             correct = (preds == labels.to(args.device)).sum().item()
             acc_meter.update(correct/preds.shape[0])
-    print(f'Accuracy = {acc_meter.avg * 100: .2f}')
+    logger.info(f'Accuracy = {acc_meter.avg * 100: .2f}')
 
 
 if __name__ == "__main__":

@@ -44,7 +44,7 @@ class projection_head(nn.Module):
             nn.Linear(hidden_dim, out_dim),
             nn.BatchNorm1d(hidden_dim),
         )
-        self.num_layers = 3
+        self.num_layers = 2
         
     def set_layersNum(self, numlayers):
         self.num_layers = numlayers

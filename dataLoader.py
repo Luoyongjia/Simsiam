@@ -42,7 +42,7 @@ class GaussianBlur(object):
 
 
 class transform_single:
-    def __init__(self, image_size, train, normalize=CIFAR10NORM):
+    def __init__(self, image_size, train, normalize=IMAGENETNORM):
         if train is True:
             self.transform = transforms.Compose([
                 transforms.RandomResizedCrop(image_size, scale=(0.08, 1.0), ratio=(3.0/4.0, 4.0/3.0), interpolation=Image.BICUBIC),
@@ -63,7 +63,7 @@ class transform_single:
 
 
 class transform_simsiam:
-    def __init__(self, image_size, normalize=CIFAR10NORM):
+    def __init__(self, image_size, normalize=IMAGENETNORM):
         image_size = 224 if image_size is None else image_size
         p_blur = 0.5 if image_size > 32 else 0
         self.transform = transforms.Compose([
