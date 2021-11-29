@@ -8,6 +8,6 @@ matplotlib.
 ## Datasets
 Please change the datasets dir in `Utils/parser.py`.
 ## Experiment
-|learning rate|batch_size|Encoder|Acc|
+|learning rate|batch_size|Encoder|Acc (linear eval)|
 |-----|-----|-----|-----|
-|0.18|512|ResNet18|89.36|t18
+|0.16|512|ResNet18|91.66|t18

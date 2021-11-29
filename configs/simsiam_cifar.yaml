@@ -1,6 +1,6 @@
 name: simsiam-cifar10-experiment-resnet18_cifar_variant1
 device: cuda
-exp_num: 15
+exp_num: 19
 save_frequency: 25
 dataset: 
   name: cifar10
@@ -18,7 +18,7 @@ train:
     momentum: 0.9
   warmup_epochs: 10
   warmup_lr: 0
-  base_lr: 0.15
+  base_lr: 0.16
   final_lr: 0.0
   num_epochs: 800 # this parameter influence the lr decay
   stop_at_epoch: 800 # has to be smaller than num_epochs
@@ -33,9 +33,9 @@ eval: # linear evaluation, False will turn off automatic evaluation after traini
     momentum: 0.9
   warmup_lr: 0
   warmup_epochs: 10
-  base_lr: 0.15
+  base_lr: 30
   final_lr: 0
-  batch_size: 512
+  batch_size: 256
   num_epochs: 100
 
 logger:
