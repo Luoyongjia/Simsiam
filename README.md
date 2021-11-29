@@ -10,4 +10,4 @@ Please change the datasets dir in `Utils/parser.py`.
 ## Experiment
 |learning rate|batch_size|Encoder|Acc|
 |-----|-----|-----|-----|
-|0.18|512|ResNet18|88.49|t18
+|0.18|512|ResNet18|89.36|t18
